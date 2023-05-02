@@ -96,6 +96,8 @@ public class FlappyPanel extends JPanel implements KeyListener, ActionListener {
         setFont(new Font("Arial", Font.BOLD, 36));
         g.drawString("Game Over", 400/2, 800/2);
         g.drawString("Score: " + score, 400/2, 800/2 + 50);
+
+        g.drawString("Press R to restart", 250, 800/2 + 300);
     }
 
     public void actionPerformed(ActionEvent e){
@@ -115,6 +117,24 @@ public class FlappyPanel extends JPanel implements KeyListener, ActionListener {
         int code = e.getKeyCode();
         if(code == KeyEvent.VK_SPACE){
             acceleration = -10;
+        }
+        if(code == e.VK_S){
+            time.start();
+        }
+        if(code == e.VK_R){
+            time.stop();
+            birdHeight = Height/ 4; // the height where the bird starts at
+            velocity = 0;
+            acceleration = 8;
+            impulse = 1;
+            wallX[0] = Width;
+            wallX[1] = Width + 350;
+            gap[0] = (int) (Math.random() * (MAX_GAP_POS - MIN_GAP_POS) + MIN_GAP_POS);
+            gap[1] = (int) (Math.random() * (MAX_GAP_POS - MIN_GAP_POS) + MIN_GAP_POS);
+            setBackground(skyBlue);
+            gameOver = false;
+            score = 0;
+            repaint();
         }
     }
     public void keyReleased(KeyEvent e){

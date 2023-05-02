@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.KeyListener;
@@ -33,7 +32,7 @@ public class FlappyPanel extends JPanel implements KeyListener, ActionListener {
     int [] gap = {(int) (Math.random() * (MAX_GAP_POS - MIN_GAP_POS) + MIN_GAP_POS) , (int) (Math.random() * (MAX_GAP_POS - MIN_GAP_POS) + MIN_GAP_POS)}; // the gap between the walls
 
     boolean gameOver = false;
-    boolean restartClicked = false;
+    //boolean restartClicked = false;
     int score;
 
 
@@ -55,12 +54,6 @@ public class FlappyPanel extends JPanel implements KeyListener, ActionListener {
             g.drawString("Score: " + score, 20, 20);
         }else{
             gameOver(g);
-            if(!restartClicked) {
-                gameOver(g);
-            } else {
-                restart();
-                restartClicked = true;
-            }
         }
 
     }
@@ -68,7 +61,6 @@ public class FlappyPanel extends JPanel implements KeyListener, ActionListener {
     private void drawBird(Graphics g){
         // draw the bird
         g.setColor(Color.YELLOW); // set the color of the bird
-        //g.drawLine(wallX,gap, wallX + Wall_Width, gap + 100);
         g.fillOval(Width/4, birdHeight + velocity, 25, 25);
     }
     private void drawWall(Graphics g){
@@ -79,28 +71,14 @@ public class FlappyPanel extends JPanel implements KeyListener, ActionListener {
             g.fillRect(wallX[i], gap[i], Wall_Width, GAP_SIZE);
         }
     }
-//    private void logic(){
-//        for(int i = 0 ; i < 2; i++) {
-//            if (wallX[i] <= 100 && wallX[i] + Wall_Width >= 100) {
-//                if ((birdHeight + velocity) >= 0 && (birdHeight + velocity) <= gap[i]
-//                        || (birdHeight + velocity + 25) >= gap[i] + 100 && (birdHeight + velocity + 25) <= Height) {
-//                    gameOver = true;
-//                }
-//            }
-//            if (wallX[i] + Wall_Width <=0){
-//                wallX[i] = Width;
-//                score ++;
-//            }
-//        }
-//    }
     private void logic(){
         if (birdHeight + velocity >= Height || birdHeight + velocity <= 0){
             gameOver = true;
         }
         for (int i = 0; i < 2; i++) {
-            if (wallX[i] <= 100 && wallX[i] + Wall_Width >= 100) {
-                if ((birdHeight + velocity) >= 0 && (birdHeight + velocity) <= gap[i]
-                        || (birdHeight + velocity + 25) >= gap[i] + 100 && (birdHeight + velocity + 25) <= Height) {
+            if (wallX[i] <= 175 && wallX[i] + Wall_Width >= 175) { // if the bird is in between the walls
+                if ((birdHeight + velocity) >= 0 && (birdHeight + velocity) <= gap[i] // if the bird is in between the top wall and the gap
+                        || (birdHeight + velocity) <= Height && (birdHeight + velocity) >= gap[i] + GAP_SIZE) { // if the bird is in between the bottom wall and the gap
                     gameOver = true;
                 }
             }
@@ -113,48 +91,17 @@ public class FlappyPanel extends JPanel implements KeyListener, ActionListener {
     }
     private void gameOver(Graphics g){
         // draw the game over screen
-        g.setColor(Color.BLACK);
-        g.fillRect(0,0,Width,Height);
+        setBackground(Color.BLACK);
         g.setColor(Color.WHITE);
         setFont(new Font("Arial", Font.BOLD, 36));
         g.drawString("Game Over", 400/2, 800/2);
         g.drawString("Score: " + score, 400/2, 800/2 + 50);
-
-//        // create a new button to restart the game
-//        JButton restartButton = new JButton("Restart Game");
-//        restartButton.addActionListener(new ActionListener() {
-//            public void actionPerformed(ActionEvent e) {
-//                // restart the game
-//                JFrame frame = (JFrame)SwingUtilities.getWindowAncestor(restartButton);
-//                frame.dispose(); // dispose of the current game JFrame
-//                new FlappyBirdStartMenu(); // create a new JFrame for the game
-//            }
-//        });
-//
-//        // add the restart button to the game over screen
-//        JPanel buttonPanel = new JPanel();
-//        buttonPanel.add(restartButton);
-//        add(buttonPanel, BorderLayout.SOUTH);
-    }
-
-    private void restart(){
-        birdHeight = Height/4;
-        velocity = 0;
-        acceleration = 8;
-        impulse = 2;
-        wallX[0] = Width;
-        wallX[1] = Width + Width/2;
-        gap[0] = (int)(Math.random() * Height- 150);
-        gap[1] = (int)(Math.random() * Height- 100);
-        gameOver = false;
-        score = 0;
     }
 
     public void actionPerformed(ActionEvent e){
         // update the bird's position
-        acceleration += impulse;
-        velocity += acceleration;
-        //birdHeight += velocity;
+        acceleration += impulse; // add the impulse to the acceleration
+        velocity += acceleration; // add the acceleration to the velocity
         // update the wall's position
         wallX[0] -= Wall_Velocity;
         wallX[1] -= Wall_Velocity;
